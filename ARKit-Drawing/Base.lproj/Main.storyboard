@@ -56,7 +56,7 @@
                                     </userDefinedRuntimeAttribute>
                                 </userDefinedRuntimeAttributes>
                             </visualEffectView>
-                            <visualEffectView opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="8ep-a7-a5I" userLabel="Visual Effect View Menu 1">
+                            <visualEffectView hidden="YES" opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="8ep-a7-a5I" userLabel="Visual Effect View Menu 1">
                                 <rect key="frame" x="20" y="696" width="180" height="29"/>
                                 <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" id="0Yx-Mg-MmT">
                                     <rect key="frame" x="0.0" y="0.0" width="180" height="29"/>
@@ -73,11 +73,14 @@
                                                         <rect key="frame" x="0.0" y="-1" width="180" height="32"/>
                                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                         <segments>
-                                                            <segment title="Rotate"/>
                                                             <segment title="Move"/>
+                                                            <segment title="Rotate"/>
                                                             <segment title="Scale"/>
                                                         </segments>
                                                         <color key="tintColor" systemColor="darkTextColor"/>
+                                                        <connections>
+                                                            <action selector="changeTranformationMode:" destination="BV1-FR-VrT" eventType="valueChanged" id="C0k-0O-9Re"/>
+                                                        </connections>
                                                     </segmentedControl>
                                                 </subviews>
                                             </view>
@@ -118,7 +121,7 @@
                                                             <segment title="Freeform"/>
                                                             <segment title="Plane"/>
                                                             <segment title="Image"/>
-                                                            <segment title="Selection"/>
+                                                            <segment title="Transform"/>
                                                         </segments>
                                                         <color key="tintColor" systemColor="darkTextColor"/>
                                                         <connections>
@@ -162,6 +165,7 @@
                     </view>
                     <connections>
                         <outlet property="sceneView" destination="Hss-D4-YVK" id="9bm-dS-QB2"/>
+                        <outlet property="selectionTransformMenu" destination="8ep-a7-a5I" id="O1F-6V-Mxm"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="SZV-WD-TEh" sceneMemberID="firstResponder"/>
