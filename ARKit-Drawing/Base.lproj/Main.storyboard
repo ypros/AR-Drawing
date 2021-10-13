@@ -20,8 +20,8 @@
                                 <rect key="frame" x="0.0" y="0.0" width="390" height="844"/>
                                 <gestureRecognizers/>
                             </arscnView>
-                            <visualEffectView opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="nGv-ui-K4i">
-                                <rect key="frame" x="293" y="750" width="80" height="40"/>
+                            <visualEffectView opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="nGv-ui-K4i" userLabel="Visual Effect View Options">
+                                <rect key="frame" x="290" y="750" width="80" height="40"/>
                                 <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" id="KbE-Uf-rq0">
                                     <rect key="frame" x="0.0" y="0.0" width="80" height="40"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -56,26 +56,69 @@
                                     </userDefinedRuntimeAttribute>
                                 </userDefinedRuntimeAttributes>
                             </visualEffectView>
-                            <visualEffectView opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="RK5-mG-jKn">
-                                <rect key="frame" x="16" y="761" width="158" height="29"/>
+                            <visualEffectView opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="8ep-a7-a5I" userLabel="Visual Effect View Menu 1">
+                                <rect key="frame" x="20" y="696" width="180" height="29"/>
+                                <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" id="0Yx-Mg-MmT">
+                                    <rect key="frame" x="0.0" y="0.0" width="180" height="29"/>
+                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                    <subviews>
+                                        <visualEffectView opaque="NO" contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="09u-sf-Cdi">
+                                            <rect key="frame" x="0.0" y="0.0" width="180" height="29"/>
+                                            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                            <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" id="ttq-Sf-yJp">
+                                                <rect key="frame" x="0.0" y="0.0" width="180" height="29"/>
+                                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                                <subviews>
+                                                    <segmentedControl opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="top" apportionsSegmentWidthsByContent="YES" segmentControlStyle="plain" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="FjU-a8-ujn">
+                                                        <rect key="frame" x="0.0" y="-1" width="180" height="32"/>
+                                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                        <segments>
+                                                            <segment title="Rotate"/>
+                                                            <segment title="Move"/>
+                                                            <segment title="Scale"/>
+                                                        </segments>
+                                                        <color key="tintColor" systemColor="darkTextColor"/>
+                                                    </segmentedControl>
+                                                </subviews>
+                                            </view>
+                                            <vibrancyEffect>
+                                                <blurEffect style="light"/>
+                                            </vibrancyEffect>
+                                        </visualEffectView>
+                                    </subviews>
+                                </view>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="29" id="JhD-Z1-c2P"/>
+                                    <constraint firstAttribute="width" constant="180" id="zFg-j4-TTl"/>
+                                </constraints>
+                                <blurEffect style="light"/>
+                                <userDefinedRuntimeAttributes>
+                                    <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
+                                        <integer key="value" value="5"/>
+                                    </userDefinedRuntimeAttribute>
+                                </userDefinedRuntimeAttributes>
+                            </visualEffectView>
+                            <visualEffectView opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="RK5-mG-jKn" userLabel="Visual Effect View Menu 2">
+                                <rect key="frame" x="20" y="761" width="250" height="29"/>
                                 <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" id="KaD-5l-R64">
-                                    <rect key="frame" x="0.0" y="0.0" width="158" height="29"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="250" height="29"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <visualEffectView opaque="NO" contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="RAH-ye-saP">
-                                            <rect key="frame" x="0.0" y="0.0" width="158" height="29"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="250" height="29"/>
                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                             <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" id="Ldw-TI-gOS">
-                                                <rect key="frame" x="0.0" y="0.0" width="158" height="29"/>
+                                                <rect key="frame" x="0.0" y="0.0" width="250" height="29"/>
                                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                 <subviews>
                                                     <segmentedControl opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="top" apportionsSegmentWidthsByContent="YES" segmentControlStyle="plain" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="jVE-nl-i8i">
-                                                        <rect key="frame" x="0.0" y="0.0" width="160" height="29"/>
+                                                        <rect key="frame" x="0.0" y="-1" width="250" height="32"/>
                                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                         <segments>
                                                             <segment title="Freeform"/>
                                                             <segment title="Plane"/>
                                                             <segment title="Image"/>
+                                                            <segment title="Selection"/>
                                                         </segments>
                                                         <color key="tintColor" systemColor="darkTextColor"/>
                                                         <connections>
@@ -91,7 +134,7 @@
                                     </subviews>
                                 </view>
                                 <constraints>
-                                    <constraint firstAttribute="width" constant="158" id="5d0-eI-fhj"/>
+                                    <constraint firstAttribute="width" constant="250" id="5d0-eI-fhj"/>
                                     <constraint firstAttribute="height" constant="29" id="WNC-pW-iAf"/>
                                 </constraints>
                                 <blurEffect style="light"/>
@@ -110,9 +153,11 @@
                             <constraint firstItem="ZCE-wD-2E2" firstAttribute="bottom" secondItem="nGv-ui-K4i" secondAttribute="bottom" constant="20" id="EI9-ck-jaV"/>
                             <constraint firstItem="Hss-D4-YVK" firstAttribute="top" secondItem="ryN-F6-McM" secondAttribute="top" id="OgV-19-dSa"/>
                             <constraint firstItem="ZCE-wD-2E2" firstAttribute="bottom" secondItem="RK5-mG-jKn" secondAttribute="bottom" constant="20" id="Pfd-Nb-YUs"/>
-                            <constraint firstItem="RK5-mG-jKn" firstAttribute="leading" secondItem="ZCE-wD-2E2" secondAttribute="leading" constant="16" id="SnR-GG-ypT"/>
-                            <constraint firstItem="ZCE-wD-2E2" firstAttribute="trailing" secondItem="nGv-ui-K4i" secondAttribute="trailing" constant="17" id="i2L-km-UXq"/>
+                            <constraint firstItem="RK5-mG-jKn" firstAttribute="leading" secondItem="ZCE-wD-2E2" secondAttribute="leading" constant="20" id="SnR-GG-ypT"/>
+                            <constraint firstItem="RK5-mG-jKn" firstAttribute="top" secondItem="8ep-a7-a5I" secondAttribute="bottom" constant="36" id="eR4-yp-pyU"/>
+                            <constraint firstItem="ZCE-wD-2E2" firstAttribute="trailing" secondItem="nGv-ui-K4i" secondAttribute="trailing" constant="20" id="i2L-km-UXq"/>
                             <constraint firstItem="Hss-D4-YVK" firstAttribute="leading" secondItem="ryN-F6-McM" secondAttribute="leading" id="tq9-FB-eeV"/>
+                            <constraint firstItem="8ep-a7-a5I" firstAttribute="leading" secondItem="ZCE-wD-2E2" secondAttribute="leading" constant="20" id="wWc-Qc-Aly"/>
                         </constraints>
                     </view>
                     <connections>
@@ -121,7 +166,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="SZV-WD-TEh" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-1162.4000000000001" y="59.820089955022496"/>
+            <point key="canvasLocation" x="-1163.0769230769231" y="59.715639810426538"/>
         </scene>
         <!--Options-->
         <scene sceneID="XWc-5m-lzL">

@@ -25,6 +25,13 @@ class ViewController: UIViewController {
     
     var selectedNode: SCNNode?
     
+    var hittedNode: SCNNode? {
+        didSet {
+            oldValue?.opacity = 1
+            hittedNode?.opacity = 0.75
+        }
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -43,6 +50,9 @@ class ViewController: UIViewController {
     }
 
     @IBAction func changeObjectMode(_ sender: UISegmentedControl) {
+        
+        hittedNode = nil
+        
         switch sender.selectedSegmentIndex {
         case 0:
             objectMode = .freeform
@@ -90,7 +100,7 @@ class ViewController: UIViewController {
         case .freeform:
             addNodeInFront(selectedNode)
         case .image:
-            break
+            findNode(at: point)
         case .plane:
             addNode(selectedNode, at: point)
         }
@@ -100,16 +110,22 @@ class ViewController: UIViewController {
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
         super.touchesMoved(touches, with: event)
         
-        guard let touch = touches.first, let currentNode = objectNodes.last else { return }
+        guard let touch = touches.first else { return }
         let location = touch.location(in: sceneView)
         let previousLocation = touch.previousLocation(in: sceneView)
         
         switch objectMode {
         case .freeform:
+            guard let currentNode = objectNodes.last else { return }
+            
             rotateNode(currentNode, eulerAngles: SCNVector3(location.x - previousLocation.x, 0, location.y - previousLocation.y))
         case .image:
-            break
+            guard let currentNode = hittedNode else { return }
+            
+            moveNode(currentNode, vector: SCNVector3(location.x - previousLocation.x, 0, location.y - previousLocation.y))
         case .plane:
+            guard let currentNode = objectNodes.last else { return }
+            
             moveNode(currentNode, vector: SCNVector3(location.x - previousLocation.x, 0, location.y - previousLocation.y))
         }
         
@@ -155,6 +171,21 @@ class ViewController: UIViewController {
     }
     
     func moveNode(_ node: SCNNode, vector: SCNVector3) {
+        guard let frame = sceneView.session.currentFrame else { return }
+        
+        let transform = frame.camera.transform
+        
+        let k: Float = 300
+        var translation = matrix_identity_float4x4
+        translation.columns.3.x = vector.x / k
+        translation.columns.3.y = vector.y / k
+        translation.columns.3.z = vector.z / k
+        
+        node.simdTransform = matrix_multiply(node.simdTransform , translation)
+        
+    }
+    
+    func vectorMoveNode(_ node: SCNNode, vector: SCNVector3) {
         let k: Float = 300
         var translation = matrix_identity_float4x4
         translation.columns.3.x = vector.x / k
@@ -192,6 +223,21 @@ class ViewController: UIViewController {
         node.simdTransform = matrix_multiply(node.simdTransform , translationZ)
         
     }
+    
+    func findNode(at point: CGPoint) {
+        guard let hitResult = sceneView.hitTest(point, options: [.searchMode: SCNHitTestSearchMode.all.rawValue]).first else { return }
+        
+        if hittedNode == nil {
+            hittedNode = hitResult.node
+        }
+        else if hittedNode == hitResult.node {
+            hittedNode = nil
+        }
+        else {
+            hittedNode = hitResult.node
+        }
+        
+    }
 }
 
 extension ViewController: OptionsViewControllerDelegate {
@@ -204,6 +250,9 @@ extension ViewController: OptionsViewControllerDelegate {
     
     func togglePlaneVisualization() {
         dismiss(animated: true, completion: nil)
+        
+        guard objectMode == .plane else { return }
+        arePlanesHidden.toggle()
     }
     
     func undoLastObject() {

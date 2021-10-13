@@ -1,7 +1,7 @@
 import UIKit
 import SceneKit
 
-protocol OptionsViewControllerDelegate: class {
+protocol OptionsViewControllerDelegate: AnyObject {
     func objectSelected(node: SCNNode)
     func undoLastObject()
     func togglePlaneVisualization()
