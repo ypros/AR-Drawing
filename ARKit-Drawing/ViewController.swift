@@ -3,12 +3,13 @@ import ARKit
 
 class ViewController: UIViewController {
 
+    // MARK: - Variables
+    
     @IBOutlet var sceneView: ARSCNView!
     @IBOutlet weak var selectionTransformMenu: UIVisualEffectView!
     
     var arePlanesHidden = true {
         didSet {
-            print(arePlanesHidden)
             planeNodes.forEach { $0.isHidden = arePlanesHidden }
         }
     }
@@ -35,9 +36,11 @@ class ViewController: UIViewController {
     var hittedNode: SCNNode? {
         didSet {
             oldValue?.opacity = 1
-            hittedNode?.opacity = 0.75
+            hittedNode?.opacity = 0.8
         }
     }
+    
+    // MARK: - View Methods
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -56,6 +59,8 @@ class ViewController: UIViewController {
         sceneView.session.pause()
     }
 
+    // MARK: - Actions
+    
     @IBAction func changeObjectMode(_ sender: UISegmentedControl) {
         
         switch sender.selectedSegmentIndex {
@@ -94,6 +99,8 @@ class ViewController: UIViewController {
         
     }
     
+    // MARK: - Methods
+    
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "showOptions" {
             let optionsViewController = segue.destination as! OptionsContainerViewController
@@ -111,7 +118,7 @@ class ViewController: UIViewController {
             planeNodes.removeAll()
             
             // Hide all future planes
-            arePlanesHidden = false
+            arePlanesHidden = true
             
             // Remove existing anchors if reset is true
             let options: ARSession.RunOptions = reset ? .removeExistingAnchors : []
@@ -121,6 +128,8 @@ class ViewController: UIViewController {
             configuration.planeDetection = .horizontal
             sceneView.session.run(configuration, options: options)
         }
+    
+    // MARK: - Touch Methods
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         super.touchesBegan(touches, with: event)
@@ -132,14 +141,15 @@ class ViewController: UIViewController {
         case .freeform:
             addNodeInFront(selectedNode)
         case .image:
-            break
+            addNodeToImage(selectedNode, at: point)
         case .plane:
-            addNode(selectedNode, at: point)
+            addNodeToPlane(selectedNode, at: point)
         case .transform:
             findNode(at: point)
         }
         
     }
+    
     
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
         super.touchesMoved(touches, with: event)
@@ -180,7 +190,19 @@ class ViewController: UIViewController {
         
     }
     
-    func addNode(_ node: SCNNode, at point: CGPoint) {
+    // MARK: - Node Methods
+    
+    func addNodeToSceneRoot(_ node: SCNNode) {
+   
+        let clonedNode = node.clone()
+        
+        sceneView.scene.rootNode.addChildNode(clonedNode)
+        
+        objectNodes.append(clonedNode)
+        
+    }
+    
+    func addNodeToPlane(_ node: SCNNode, at point: CGPoint) {
         
         
         guard let query = sceneView.raycastQuery(from: point, allowing: .existingPlaneGeometry, alignment: .horizontal) else {
@@ -189,7 +211,7 @@ class ViewController: UIViewController {
         
         let results = sceneView.session.raycast(query)
         guard let hitResult = results.first else {
-            print("No surface found")
+            print(#line, #function, "No surface found")
             return
         }
         
@@ -201,16 +223,12 @@ class ViewController: UIViewController {
         addNodeToSceneRoot(node)
     }
     
-    func addNode(_ node: SCNNode, to parentNode: SCNNode) {
-        let clonedNode = node.clone()
-        
-        sceneView.scene.rootNode.addChildNode(clonedNode)
-        
-        objectNodes.append(clonedNode)
-    }
-    
-    func addNodeToSceneRoot(_ node: SCNNode) {
-        addNode(node, to: sceneView.scene.rootNode)
+    func addNodeToImage(_ node: SCNNode, at point: CGPoint) {
+        guard let result = sceneView.hitTest(point, options: [:]).first else { return }
+        guard result.node.name == "image" else { return }
+        node.transform = result.node.worldTransform
+        node.eulerAngles.x += .pi/2
+        addNodeToSceneRoot(node)
     }
     
     func addNodeInFront(_ node: SCNNode) {
@@ -231,6 +249,24 @@ class ViewController: UIViewController {
         addNodeToSceneRoot(node)
     }
     
+    func findNode(at point: CGPoint) {
+        let results = sceneView.hitTest(point, options: [.searchMode : SCNHitTestSearchMode.all.rawValue])
+        
+        guard let result = results.filter( { $0.node.name != "floor" &&  $0.node.name != "image"}).first else { return }
+        
+        let hitResult = objectNodes.contains(result.node) ? result.node : result.node.parent
+        
+        if hittedNode == hitResult {
+            hittedNode = nil
+        }
+        else {
+            hittedNode = hitResult
+        }
+        
+    }
+    
+    // MARK: - Transform Methods
+    
     func moveNode(_ node: SCNNode, vector: SCNVector3) {
         guard sceneView.session.currentFrame != nil else { return }
         
@@ -246,7 +282,7 @@ class ViewController: UIViewController {
     
     
     func rotateNode(_ node: SCNNode, eulerAngles: SCNVector3) {
-        let k: Float = 30
+        let k: Float = 50
         var translationX = matrix_identity_float4x4
         translationX.columns.1.y = cos(eulerAngles.x / k)
         translationX.columns.1.z = sin(eulerAngles.x / k)
@@ -276,7 +312,7 @@ class ViewController: UIViewController {
     func scaleNode(_ node: SCNNode, vector: SCNVector3) {
         guard sceneView.session.currentFrame != nil else { return }
         
-        let size = 1 + (vector.z / 10)
+        let size = 1 + (vector.z / 50)
 
         var translation = matrix_identity_float4x4
         translation.columns.0.x = size
@@ -287,21 +323,7 @@ class ViewController: UIViewController {
         
     }
     
-    func findNode(at point: CGPoint) {
-        let results = sceneView.hitTest(point, options: [.searchMode : SCNHitTestSearchMode.all.rawValue])
-        
-        guard let result = results.filter( { $0.node.name != "floor" }).first else { return }
-        
-        let hitResult = objectNodes.contains(result.node) ? result.node : result.node.parent
-        
-        if hittedNode == hitResult {
-            hittedNode = nil
-        }
-        else {
-            hittedNode = hitResult
-        }
-        
-    }
+    
 }
 
 extension ViewController: OptionsViewControllerDelegate {
@@ -337,23 +359,17 @@ extension ViewController: OptionsViewControllerDelegate {
 
 extension ViewController: ARSCNViewDelegate {
     
-    func createFloor(planeAnchor: ARPlaneAnchor) -> SCNNode {
-        let extent = planeAnchor.extent
+    func createFloor(with size: CGSize, opacity: CGFloat = 0.25) -> SCNNode {
+            let plane = SCNPlane(width: size.width, height: size.height)
         
-        let width = CGFloat(extent.x)
-        let height = CGFloat(extent.z)
-        
-        let plane = SCNPlane(width: width, height: height)
-        plane.firstMaterial?.diffuse.contents = UIColor.green
-        
-        let planeNode = SCNNode(geometry: plane)
-        planeNode.eulerAngles.x -= .pi/2
-        planeNode.opacity = 0.15
-        planeNode.name = "floor"
-        
-        return planeNode
-        
-    }
+            plane.firstMaterial?.diffuse.contents = UIColor.green
+            
+            let planeNode = SCNNode(geometry: plane)
+            planeNode.eulerAngles.x -= .pi/2
+            planeNode.opacity = opacity
+            
+            return planeNode
+        }
     
     func updateFloor(for node: SCNNode, anchor: ARPlaneAnchor) {
             guard let planeNode = node.childNodes.first, let plane = planeNode.geometry as? SCNPlane else {
@@ -367,35 +383,48 @@ extension ViewController: ARSCNViewDelegate {
             
             // Position the plane in the center
             planeNode.simdPosition = anchor.center
+
         }
     
     func nodeAdded(_ node: SCNNode, for anchor: ARPlaneAnchor) {
-        let planeNode = createFloor(planeAnchor: anchor)
+        let extent = anchor.extent
+        let size = CGSize(width: CGFloat(extent.x), height: CGFloat(extent.z))
+        let planeNode = createFloor(with: size)
+        planeNode.isHidden = arePlanesHidden
+        planeNode.name = "floor"
+        
+        // Add plane node to the list of plane nodes
         planeNodes.append(planeNode)
         
         node.addChildNode(planeNode)
-        
+    }
+    
+    func nodeAdded(_ node: SCNNode, for anchor: ARImageAnchor) {
+        let size = anchor.referenceImage.physicalSize
+        let coverNode = createFloor(with: size, opacity: 0.01)
+        coverNode.name = "image"
+        node.addChildNode(coverNode)
     }
     
     func renderer(_ renderer: SCNSceneRenderer, didAdd node: SCNNode, for anchor: ARAnchor) {
+            switch anchor {
+            case let imageAnchor as ARImageAnchor:
+                nodeAdded(node, for: imageAnchor)
+            case let planeAnchor as ARPlaneAnchor:
+                nodeAdded(node, for: planeAnchor)
+            default:
+                print(#line, #function, "Unknown anchor type \(anchor) is found")
+            }
+        }
         
-        switch anchor {
-        case let planeAnchor as ARPlaneAnchor:
-            nodeAdded(node, for: planeAnchor)
-            print(#function, planeNodes.count)
-        default:
-            break
+        func renderer(_ renderer: SCNSceneRenderer, didUpdate node: SCNNode, for anchor: ARAnchor) {
+            switch anchor {
+            case is ARImageAnchor:
+                break
+            case let planeAnchor as ARPlaneAnchor:
+                updateFloor(for: node, anchor: planeAnchor)
+            default:
+                print(#line, #function, "Unknown anchor type \(anchor) is updated")
+            }
         }
-    }
-    
-    func renderer(_ renderer: SCNSceneRenderer, didUpdate node: SCNNode, for anchor: ARAnchor) {
-        switch anchor {
-        case is ARImageAnchor:
-            break
-        case let planeAnchor as ARPlaneAnchor:
-            updateFloor(for: node, anchor: planeAnchor)
-        default:
-            print(#line, #function, "Unknown anchor type \(anchor) is updated")
-        }
-    }
 }
